@@ -11,7 +11,7 @@ export const FILTER_CATEGORY = {
 }
 
 function App() {
-  const [notes, setNotes] = useState()
+  const [notes, setNotes] = useState([])
   const [filter, setFilter] = useState(FILTER_CATEGORY.ALL)
   const [search, setSearch] = useState("")
 
