@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 import Header from "./components/Header"
 import NoteCreateSection from "./components/NoteCreateSection"
@@ -15,30 +15,48 @@ function App() {
   const [filter, setFilter] = useState(FILTER_CATEGORY.ALL)
   const [search, setSearch] = useState("")
 
+  // Load notes from local storage if available
+  useEffect(() => {
+    const notes = JSON.parse(window.localStorage.getItem("notes"))
+    if (notes) {
+      setNotes(notes)
+    }
+  }, [])
+
+  // Save notes to local storage
   function handleCreateNote(newNote) {
-    setNotes([...notes, newNote])
+    const updatedNotes = [...notes, newNote]
+
+    setNotes(updatedNotes)
+    window.localStorage.setItem("notes", JSON.stringify(updatedNotes))
   }
 
+  // Toggle archived status
   function handleArchiveNote(id) {
-    setNotes(
-      notes.map((note) => {
-        if (note.id === id) {
-          return { ...note, archived: !note.archived }
-        } else {
-          return note
-        }
-      })
-    )
+    const updatedNotes = notes.map((note) => {
+      if (note.id === id) {
+        return { ...note, archived: !note.archived }
+      } else {
+        return note
+      }
+    })
+
+    setNotes(updatedNotes)
+    window.localStorage.setItem("notes", JSON.stringify(updatedNotes))
   }
 
+  // Delete note
   function handleDeleteNote(id) {
     if (window.confirm("Are you sure want to delete this note?")) {
-      setNotes(notes.filter((note) => note.id !== id))
+      const updatedNotes = notes.filter((note) => note.id !== id)
+
+      setNotes(updatedNotes)
+      window.localStorage.setItem("notes", JSON.stringify(updatedNotes))
     }
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col pb-24">
       <Header setSearch={setSearch} />
       <div className="w-1/3 mx-auto mt-8">
         <NoteCreateSection handleCreateNote={handleCreateNote} />
